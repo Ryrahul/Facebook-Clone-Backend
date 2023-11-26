@@ -11,7 +11,64 @@ datasource db {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+  id              Int           @id @default(autoincrement())
+  email           String        @unique
+  username        String
+  password        String
+  created_at      DateTime      @default(now())
+  isVerified      Boolean
+  profile_picture String?
+  profile_id      UserProfile[]
+  Comment         Comment[]
+  CreatedPost     Post[]        @relation("created")
+  likedPost       Post[]        @relation("Likes")
+  savedPost       Post[]        @relation("saved")
+  postId          Int?
+}
+
+model UserProfile {
+  id          Int      @id @default(autoincrement())
+  avatar      String
+  bio         String
+  birthdate   DateTime
+  gender      Gender
+  location    String
+  user        User     @relation(fields: [userId], references: [id])
+  userId      Int      @unique
+  accountType Type     @default(Public)
+}
+
+model Post {
+  id         Int       @id @default(autoincrement())
+  content    String
+  image_url  String?
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  user_id    Int
+  author     User      @relation("created", fields: [user_id], references: [id])
+  savedBy    User[]    @relation("saved")
+  likes      User[]    @relation("Likes")
+  Comment    Comment[]
+}
+
+model Comment {
+  id         Int      @id @default(autoincrement())
+  content    String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  user_id    Int
+  post_id    Int
+  author     User     @relation(fields: [user_id], references: [id])
+  post       Post     @relation(fields: [post_id], references: [id])
+}
+
+enum Gender {
+  Male
+  Female
+  Prefer_Not_To_Say
+}
+
+enum Type {
+  Private
+  Public
 }
