@@ -11,19 +11,18 @@ datasource db {
 }
 
 model User {
-  id              Int           @id @default(autoincrement())
-  email           String        @unique
-  username        String
-  password        String
-  created_at      DateTime      @default(now())
-  isVerified      Boolean
-  profile_picture String?
-  profile_id      UserProfile[]
-  Comment         Comment[]
-  CreatedPost     Post[]        @relation("created")
-  likedPost       Post[]        @relation("Likes")
-  savedPost       Post[]        @relation("saved")
-  postId          Int?
+  id                 Int          @id @default(autoincrement())
+  email              String       @unique
+  name               String
+  password           String
+  created_at         DateTime     @default(now())
+  isVerified         Boolean      @default(false)
+  profile_picture    String?
+  Profile_Preference UserProfile?
+  Comment            Comment[]
+  CreatedPost        Post[]       @relation("created")
+  likedPost          Post[]       @relation("Likes")
+  savedPost          Post[]       @relation("saved")
 }
 
 model UserProfile {
