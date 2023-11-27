@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { SignUpDto } from 'src/auth/dto/create-auth.dto';
+import { SignUpDto } from 'src/auth/dto/Signup-dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 export interface user {
   id: number;
