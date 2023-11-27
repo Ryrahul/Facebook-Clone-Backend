@@ -38,6 +38,24 @@ export class AuthService {
     });
     return newUser;
   }
+  async login({ email, password }: LoginDto): Promise<{ accessToken: string }> {
+    const fbuser = await this.userservice.getUserByEmail(email);
+    if (!fbuser) {
+      throw new HttpException(
+        { message: 'wrong credentials' },
+        HttpStatus.CONFLICT,
+      );
+    }
+    const checkpassword = await bcrypt.compare(password, fbuser.password);
+    if (!checkpassword) {
+      throw new HttpException(
+        { message: 'wrong credentials' },
+        HttpStatus.CONFLICT,
+      );
+    }
+
+    return this.SignToken(fbuser.id, fbuser.name);
+  }
   private async SignToken(
     id: number,
     name: string,

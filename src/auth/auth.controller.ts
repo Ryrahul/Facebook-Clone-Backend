@@ -11,6 +11,7 @@ import {
 import { AuthService } from './auth.service';
 import { SignUpDto, signupSchema } from './dto/Signup-dto';
 import { ZodValidationPipe } from 'src/common/zod.pipe';
+import { LoginDto, loginSchema } from './dto/login-dto';
 
 @Controller('auth')
 export class AuthController {
@@ -18,7 +19,14 @@ export class AuthController {
 
   @Post('/signup')
   @UsePipes(new ZodValidationPipe(signupSchema))
-  create(@Body() createAuthDto: SignUpDto) {
-    return this.authService.SignUp(createAuthDto);
+  signup(@Body() signupdto: SignUpDto):Promise<SignUpDto> {
+    return this.authService.SignUp(signupdto);
   }
+  @Post('/signin')
+  @UsePipes(new ZodValidationPipe(loginSchema))
+  signin(@Body() logindto:LoginDto){
+    return this.authService.login(logindto)
+    
+  }
+
 }
