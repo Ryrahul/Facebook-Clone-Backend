@@ -40,7 +40,7 @@ export class AuthService {
       email,
       password: hashpassword,
     });
-    this.mailservice.sendEmail(newUser.email, newUser.id);
+    this.mailservice.sendVerificationEmail(newUser.email, newUser.id);
     return {
       message: 'Verification Mail Sent',
     };
@@ -70,6 +70,22 @@ export class AuthService {
     } catch (e) {
       return e.message;
     }
+  }
+  async forgotPassword(email: string): Promise<{ message: string }> {
+    const fbuser = await this.userservice.getUserByEmail(email);
+    if (!fbuser) {
+      throw new HttpException(
+        { message: 'wrong credentials' },
+        HttpStatus.CONFLICT,
+      );
+    }
+    const uniqueString = await this.Createhash(fbuser.name);
+
+    await this.mailservice.sendForgotPasswordInstruction(fbuser.id, fbuser);
+
+    return {
+      message: 'Password reset link has been sent to you email',
+    };
   }
   private async SignToken(
     id: number,

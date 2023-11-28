@@ -34,4 +34,9 @@ export class AuthController {
   async verify(@Query('token', ParseIntPipe) token: number) {
     return await this.authService.verify(token);
   }
+  @Public()
+  @Post('forgotpass')
+  async forgotPassword(@Body('email') email:string ){
+    return await this.authService.forgotPassword(email);
+  }
 }

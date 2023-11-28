@@ -1,6 +1,7 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { user } from 'src/user/user.service';
 
 @Injectable()
 export class MailService {
@@ -8,7 +9,10 @@ export class MailService {
     private readonly mailerService: MailerService,
     private readonly configservice: ConfigService,
   ) {}
-  async sendEmail(email: string, token: number): Promise<{ message: string }> {
+  async sendVerificationEmail(
+    email: string,
+    token: number,
+  ): Promise<{ message: string }> {
     const serverUrl = this.configservice.get('SERVER_URL');
     const url = `${serverUrl}/auth/confirm?token=${token}`;
     await this.mailerService.sendMail({
@@ -23,5 +27,20 @@ export class MailService {
   `,
     });
     return { message: 'Email sent successfully' };
+  }
+  async sendForgotPasswordInstruction(token: number, fbuser: user) {
+    const serverUrl = this.configservice.get('SERVER_URL');
+    const url = `${serverUrl}/forgotpass?token=${token}`;
+    await this.mailerService.sendMail({
+      to: fbuser.email,
+      subject: 'Email Verification',
+      html: `
+    <h2>Forgot Password</h2>
+    <p>We have received a request to change your password for ${fbuser.name} </p>
+    <p><a href="${url}">Click this to reset your password</a></p>
+    <p>If you did not sign up for our service, you can ignore this email.</p>
+    <p>Regards,<br>Your App Team</p>
+  `,
+    });
   }
 }
