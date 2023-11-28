@@ -19,7 +19,7 @@ export class AuthController {
 
   @Post('/signup')
   @UsePipes(new ZodValidationPipe(signupSchema))
-  signup(@Body() signupdto: SignUpDto):Promise<SignUpDto> {
+  signup(@Body() signupdto: SignUpDto){
     return this.authService.SignUp(signupdto);
   }
   @Post('/signin')
