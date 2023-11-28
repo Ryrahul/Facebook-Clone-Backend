@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   ParseIntPipe,
   Delete,
   UsePipes,
@@ -24,6 +23,7 @@ export class AuthController {
   async signup(@Body() signupdto: SignUpDto) {
     return await this.authService.SignUp(signupdto);
   }
+  @Public()
   @Post('/signin')
   @UsePipes(new ZodValidationPipe(loginSchema))
   async signin(@Body() logindto: LoginDto) {
