@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { SignUpDto } from './dto/Signup-dto';
-import { UserService } from 'src/user/user.service';
+import { UserService, user } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login-dto';
 import { JwtService } from '@nestjs/jwt';
@@ -13,16 +13,16 @@ export class AuthService {
     private readonly userservice: UserService,
     private readonly jwt: JwtService,
     private readonly config: ConfigService,
-    private readonly mailservice:MailService
+    private readonly mailservice: MailService,
   ) {}
 
   private async Createhash(StringToHash: string): Promise<string> {
     const saltround = 10;
     return await bcrypt.hash(StringToHash, saltround);
   }
-  async SignUp({ name, email, password }: SignUpDto):Promise<{
-    message:string;
-  }>{
+  async SignUp({ name, email, password }: SignUpDto): Promise<{
+    message: string;
+  }> {
     const existngUser = await this.userservice.getUserByEmail(email);
     if (existngUser) {
       throw new HttpException(
@@ -35,16 +35,15 @@ export class AuthService {
       );
     }
     const hashpassword = await this.Createhash(password);
-    const newUser=await this.userservice.createUser({
+    const newUser = await this.userservice.createUser({
       name,
       email,
       password: hashpassword,
     });
-    this.mailservice.sendEmail(newUser.email,newUser.id)
+    this.mailservice.sendEmail(newUser.email, newUser.id);
     return {
-      message:"Verification Mail Sent"
-    }
-     
+      message: 'Verification Mail Sent',
+    };
   }
   async login({ email, password }: LoginDto): Promise<{ accessToken: string }> {
     const fbuser = await this.userservice.getUserByEmail(email);
@@ -63,6 +62,14 @@ export class AuthService {
     }
 
     return this.SignToken(fbuser.id, fbuser.name);
+  }
+  async verify(token: number): Promise<user> {
+    try {
+      const verifiedUser = await this.userservice.verifyUser(token);
+      return verifiedUser;
+    } catch (e) {
+      return e.message;
+    }
   }
   private async SignToken(
     id: number,

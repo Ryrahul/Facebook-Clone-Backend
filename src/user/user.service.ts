@@ -23,4 +23,14 @@ export class UserService {
       where: { email },
     });
   }
+  async verifyUser(id: number): Promise<user> {
+    return await this.prismaservice.user.update({
+      where: {
+        id,
+      },
+      data: {
+        isVerified: true,
+      },
+    });
+  }
 }

@@ -4,29 +4,34 @@ import {
   Post,
   Body,
   Patch,
-  Param,
+  ParseIntPipe,
   Delete,
   UsePipes,
+  Query,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignUpDto, signupSchema } from './dto/Signup-dto';
 import { ZodValidationPipe } from 'src/common/zod.pipe';
 import { LoginDto, loginSchema } from './dto/login-dto';
+import { Public } from 'src/common/decorator/public-decorator';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-
+  @Public()
   @Post('/signup')
   @UsePipes(new ZodValidationPipe(signupSchema))
-  signup(@Body() signupdto: SignUpDto){
-    return this.authService.SignUp(signupdto);
+  async signup(@Body() signupdto: SignUpDto) {
+    return await this.authService.SignUp(signupdto);
   }
   @Post('/signin')
   @UsePipes(new ZodValidationPipe(loginSchema))
-  signin(@Body() logindto:LoginDto){
-    return this.authService.login(logindto)
-    
+  async signin(@Body() logindto: LoginDto) {
+    return await this.authService.login(logindto);
   }
-
+  @Public()
+  @Get('/confirm')
+  async verify(@Query('token', ParseIntPipe) token: number) {
+    return await this.authService.verify(token);
+  }
 }

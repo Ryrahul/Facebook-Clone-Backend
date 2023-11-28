@@ -4,14 +4,17 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class MailService {
-      constructor(private readonly mailerService: MailerService,private readonly configservice:ConfigService) {}
-    async sendEmail(email:string,token:number):Promise<object> {
-      const serverUrl=this.configservice.get('SERVER_URL')
-          const url = `${serverUrl}/auth/confirm?token=${token}`;
+  constructor(
+    private readonly mailerService: MailerService,
+    private readonly configservice: ConfigService,
+  ) {}
+  async sendEmail(email: string, token: number): Promise<{ message: string }> {
+    const serverUrl = this.configservice.get('SERVER_URL');
+    const url = `${serverUrl}/auth/confirm?token=${token}`;
     await this.mailerService.sendMail({
       to: email,
       subject: 'Email Verification',
-       html: `
+      html: `
     <h2>Email Verification</h2>
     <p>Thank you for signing up! To complete your registration, please click the link below to verify your email address:</p>
     <p><a href="${url}">Verify Email</a></p>
