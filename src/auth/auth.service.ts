@@ -88,25 +88,24 @@ export class AuthService {
       message: 'Password reset link has been sent to you email',
     };
   }
-  async ResetPassword(email:string,token:string){
-    
-    const fbuser=await this.userservice.getUserByEmail(email)
-    const match=await bcrypt.compare(fbuser.name,token)
-    if(!match){
+  async ResetPassword(
+    email: string,
+    token: string,
+  ): Promise<{ message: string }> {
+    const fbuser = await this.userservice.getUserByEmail(email);
+    const match = await bcrypt.compare(fbuser.name, token);
+    if (!match) {
       throw new HttpException(
         { message: 'Something Went wrong' },
         HttpStatus.CONFLICT,
       );
-
     }
-    const newpassword=randomBytes(15).toString('hex')
-    await this.userservice.updatePassowrd(fbuser.email,newpassword)
-    await this.mailservice.NewPassword(newpassword,fbuser)
+    const newpassword = randomBytes(15).toString('hex');
+    await this.userservice.updatePassowrd(fbuser.email, newpassword);
+    await this.mailservice.NewPassword(newpassword, fbuser);
     return {
-      message:"New Password has been sent to mail"
-    }
-
-
+      message: 'New Password has been sent to mail',
+    };
   }
   private async SignToken(
     id: number,

@@ -28,7 +28,7 @@ export class MailService {
     });
     return { message: 'Email sent successfully' };
   }
-  async sendForgotPasswordInstruction(token:string, fbuser: user) {
+  async sendForgotPasswordInstruction(token: string, fbuser: user) {
     const serverUrl = this.configservice.get('SERVER_URL');
     const url = `${serverUrl}/auth/forgotpass/verify?token=${token}&user=${fbuser.email}`;
     await this.mailerService.sendMail({
@@ -43,7 +43,7 @@ export class MailService {
   `,
     });
   }
-    async NewPassword(token:string, fbuser: user) {
+  async NewPassword(token: string, fbuser: user) {
     await this.mailerService.sendMail({
       to: fbuser.email,
       subject: 'New Password',

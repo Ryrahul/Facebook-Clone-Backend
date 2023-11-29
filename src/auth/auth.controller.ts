@@ -36,14 +36,14 @@ export class AuthController {
   }
   @Public()
   @Post('forgotpass')
-  async forgotPassword(@Body('email') email:string ){
-    
+  async forgotPassword(@Body('email') email: string) {
     return await this.authService.forgotPassword(email);
   }
   @Public()
   @Get('forgotpass/verify')
-  async resetPassword(@Query(){token,user}:{token:string,user:string}){
-  
-return await this.authService.ResetPassword(user,token)
+  async resetPassword(
+    @Query() { token, user }: { token: string; user: string },
+  ) {
+    return await this.authService.ResetPassword(user, token);
   }
 }
