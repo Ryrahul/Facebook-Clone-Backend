@@ -19,9 +19,10 @@ export class UserService {
     return newUser;
   }
   async getUserByEmail(email: string): Promise<user> {
-    return await this.prismaservice.user.findFirst({
+    const user= await this.prismaservice.user.findFirst({
       where: { email },
     });
+    return user
   }
   async verifyUser(id: number): Promise<user> {
     return await this.prismaservice.user.update({
@@ -32,5 +33,14 @@ export class UserService {
         isVerified: true,
       },
     });
+  }
+  async updatePassowrd(email:string,newpassword:string):Promise<user>{
+    return await this.prismaservice.user.update({
+      where:{email},
+      data:{
+        password:newpassword
+      }
+    })
+
   }
 }
