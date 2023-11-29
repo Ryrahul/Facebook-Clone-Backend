@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { SignUpDto } from './dto/Signup-dto';
 import { UserService, user } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
+import { randomBytes } from 'crypto';
 import { LoginDto } from './dto/login-dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -81,11 +82,31 @@ export class AuthService {
     }
     const uniqueString = await this.Createhash(fbuser.name);
 
-    await this.mailservice.sendForgotPasswordInstruction(fbuser.id, fbuser);
+    await this.mailservice.sendForgotPasswordInstruction(uniqueString, fbuser);
 
     return {
       message: 'Password reset link has been sent to you email',
     };
+  }
+  async ResetPassword(email:string,token:string){
+    
+    const fbuser=await this.userservice.getUserByEmail(email)
+    const match=await bcrypt.compare(fbuser.name,token)
+    if(!match){
+      throw new HttpException(
+        { message: 'Something Went wrong' },
+        HttpStatus.CONFLICT,
+      );
+
+    }
+    const newpassword=randomBytes(15).toString('hex')
+    await this.userservice.updatePassowrd(fbuser.email,newpassword)
+    await this.mailservice.NewPassword(newpassword,fbuser)
+    return {
+      message:"New Password has been sent to mail"
+    }
+
+
   }
   private async SignToken(
     id: number,
