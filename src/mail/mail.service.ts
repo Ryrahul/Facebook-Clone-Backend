@@ -28,9 +28,9 @@ export class MailService {
     });
     return { message: 'Email sent successfully' };
   }
-  async sendForgotPasswordInstruction(token: number, fbuser: user) {
+  async sendForgotPasswordInstruction(token:string, fbuser: user) {
     const serverUrl = this.configservice.get('SERVER_URL');
-    const url = `${serverUrl}/forgotpass?token=${token}`;
+    const url = `${serverUrl}/auth/forgotpass/verify?token=${token}&user=${fbuser.email}`;
     await this.mailerService.sendMail({
       to: fbuser.email,
       subject: 'Email Verification',
@@ -38,6 +38,19 @@ export class MailService {
     <h2>Forgot Password</h2>
     <p>We have received a request to change your password for ${fbuser.name} </p>
     <p><a href="${url}">Click this to reset your password</a></p>
+    <p>If you did not sign up for our service, you can ignore this email.</p>
+    <p>Regards,<br>Your App Team</p>
+  `,
+    });
+  }
+    async NewPassword(token:string, fbuser: user) {
+    await this.mailerService.sendMail({
+      to: fbuser.email,
+      subject: 'New Password',
+      html: `
+    <h2>Forgot Password</h2>
+    <p>Your new password for ${fbuser.name} </p>
+    <p>is ${token}</a></p>
     <p>If you did not sign up for our service, you can ignore this email.</p>
     <p>Regards,<br>Your App Team</p>
   `,
