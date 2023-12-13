@@ -13,6 +13,8 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { PostController } from './post/post.controller';
 import { PostService } from './post/post.service';
 import { PostModule } from './post/post.module';
+import { MinioService } from './minio/minio.service';
+import { MinioModule } from './minio/minio.module';
 
 @Module({
   imports: [
@@ -24,6 +26,7 @@ import { PostModule } from './post/post.module';
     UserModule,
     MailModule,
     PostModule,
+    MinioModule,
   ],
   controllers: [AppController, UserController, PostController],
   providers: [
@@ -34,6 +37,7 @@ import { PostModule } from './post/post.module';
       useClass: JwtAuthGuard,
     },
     PostService,
+    MinioService,
   ],
 })
 export class AppModule {}
