@@ -40,11 +40,12 @@ model UserProfile {
 model Post {
   id         Int       @id @default(autoincrement())
   content    String
-  image_url  String?
+  image_url  String[]
+  image_keys String[]
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
-  user_id    Int
   author     User      @relation("created", fields: [user_id], references: [id])
+  user_id    Int
   savedBy    User[]    @relation("saved")
   likes      User[]    @relation("Likes")
   Comment    Comment[]
