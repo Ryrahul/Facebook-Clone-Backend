@@ -55,7 +55,7 @@ The authentication module has been successfully implemented. Users can register,
 
   - Delete a post
 
-    **PUT /post/id**
+  **PUT /post/id**
 
   - Update the post
 
