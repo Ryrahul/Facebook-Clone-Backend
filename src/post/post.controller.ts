@@ -2,9 +2,11 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   ParseIntPipe,
   Post,
+  Put,
   Req,
   UploadedFiles,
   UseInterceptors,
@@ -14,6 +16,7 @@ import { PostService } from './post.service';
 import { CreatPostDto, PostSchema } from './dto/Uploadpost.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ZodValidationPipe } from 'src/common/zod.pipe';
+import { UpdatePostDto, UpdatePostSchema } from './dto/UpdatepostDto';
 
 @Controller('post')
 export class PostController {
@@ -27,11 +30,27 @@ export class PostController {
     @UploadedFiles() images: Express.Multer.File[],
   ) {
     const id = req.user.id;
-    console.log(images);
     return await this.postservice.CreatePost(images, createPost, id);
   }
   @Delete(':id')
   async delete(@Param('id', ParseIntPipe) id: number, @Req() req) {
     return await this.postservice.deletePost(id, req.user.id);
+  }
+  @Get()
+  async getAll(@Req() req) {
+    return await this.postservice.findAllpost(req.user.id);
+  }
+  @Get(':id')
+  async getOne(@Param('id', ParseIntPipe) id: number) {
+    return this.postservice.findOnePost(id);
+  }
+  @Put(':id')
+  @UsePipes(new ZodValidationPipe(UpdatePostSchema))
+  async updatePost(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req,
+    @Body() updatePost: UpdatePostDto,
+  ) {
+    return this.postservice.updatePost(id, req.user.id, updatePost);
   }
 }

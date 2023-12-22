@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatPostDto } from './dto/Uploadpost.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { MinioService } from 'src/minio/minio.service';
 import { randomUUID as uuid } from 'crypto';
+import { UpdatePostDto } from './dto/UpdatepostDto';
 
 @Injectable()
 export class PostService {
@@ -39,7 +40,7 @@ export class PostService {
       return e.message;
     }
   }
-  async deletePost(id: number, user_id: number) {
+  async deletePost(id: number, user_id: number): Promise<object> {
     try {
       const post = await this.PrismaService.post.delete({
         where: {
@@ -51,6 +52,61 @@ export class PostService {
         await this.minioservice.deleteImage(image);
 
       return post;
+    } catch (e) {
+      return e.meta.cause;
+    }
+  }
+  async findAllpost(id: number): Promise<object> {
+    try {
+      const AllPost = await this.PrismaService.post.findMany({
+        where: {
+          user_id: id,
+        },
+      });
+      if (!AllPost.length) {
+        throw new NotFoundException('No post exists for the user');
+      }
+      return AllPost;
+    } catch (e) {
+      return e.meta.cause;
+    }
+  }
+  async findOnePost(id: number) {
+    try {
+      const post = await this.PrismaService.post.findUnique({
+        where: {
+          id,
+        },
+        select: {
+          id: true,
+          content: true,
+          image_keys: true,
+          image_url: true,
+          created_at: true,
+          author: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      });
+      return post;
+    } catch (e) {
+      return e.meta.cause;
+    }
+  }
+  async updatePost(id: number, user_id: number, updatepost: UpdatePostDto) {
+    try {
+      return await this.PrismaService.post.update({
+        where: {
+          id,
+          user_id,
+        },
+        data: {
+          ...updatepost,
+        },
+      });
     } catch (e) {
       return e.meta.cause;
     }
