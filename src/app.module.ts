@@ -15,6 +15,7 @@ import { PostService } from './post/post.service';
 import { PostModule } from './post/post.module';
 import { MinioService } from './minio/minio.service';
 import { MinioModule } from './minio/minio.module';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { MinioModule } from './minio/minio.module';
     MailModule,
     PostModule,
     MinioModule,
+    CommentModule,
   ],
   controllers: [AppController, UserController, PostController],
   providers: [
