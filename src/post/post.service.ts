@@ -89,6 +89,12 @@ export class PostService {
               name: true,
             },
           },
+          _count: {
+            select: {
+              Comment: true,
+              likes: true,
+            },
+          },
         },
       });
       return post;
