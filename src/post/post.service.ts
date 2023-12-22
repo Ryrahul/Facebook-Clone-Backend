@@ -15,24 +15,44 @@ export class PostService {
     createpost: CreatPostDto,
     id: number,
   ): Promise<object> {
-    const imageKeys: string[] = [];
-    const imageUrls: string[] = [];
-    for (const image of images) {
-      const imgkey = uuid();
-      imageKeys.push(imgkey);
-      imageUrls.push(this.minioservice.getUrl(imgkey));
+    try {
+      const imageKeys: string[] = [];
+      const imageUrls: string[] = [];
+      for (const image of images) {
+        const imgkey = uuid();
+        imageKeys.push(imgkey);
+        imageUrls.push(this.minioservice.getUrl(imgkey));
 
-      this.minioservice.uploadImage(image.buffer, imgkey);
+        this.minioservice.uploadImage(image.buffer, imgkey);
+      }
+      const newPost = await this.PrismaService.post.create({
+        data: {
+          content: createpost.content,
+
+          image_keys: imageKeys,
+          image_url: imageUrls,
+          user_id: id,
+        },
+      });
+      return newPost;
+    } catch (e) {
+      return e.message;
     }
-    const newPost = await this.PrismaService.post.create({
-      data: {
-        content: createpost.content,
+  }
+  async deletePost(id: number, user_id: number) {
+    try {
+      const post = await this.PrismaService.post.delete({
+        where: {
+          id: id,
+          user_id,
+        },
+      });
+      for (const image of post.image_keys)
+        await this.minioservice.deleteImage(image);
 
-        image_keys: imageKeys,
-        image_url: imageUrls,
-        user_id: id,
-      },
-    });
-    return newPost;
+      return post;
+    } catch (e) {
+      return e.meta.cause;
+    }
   }
 }
