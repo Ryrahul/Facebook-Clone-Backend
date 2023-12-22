@@ -56,8 +56,29 @@ export class CommentService {
     }
   }
 
-  update(id: number, updateCommentDto: UpdateCommentDto) {
-    return `This action updates a #${id} comment`;
+  async update(
+    id: number,
+    updateCommentDto: UpdateCommentDto,
+    user_id: number,
+  ): Promise<object> {
+    const updatedComment = await this.prismaservice.comment.update({
+      where: {
+        id,
+        user_id,
+      },
+      data: {
+        content: updateCommentDto.content,
+      },
+      select: {
+        author: {
+          select: {
+            name: true,
+            profile_picture: true,
+          },
+        },
+      },
+    });
+    return updatedComment;
   }
 
   async remove(id: number, user_id: number) {

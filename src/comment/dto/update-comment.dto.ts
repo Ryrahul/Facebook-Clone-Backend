@@ -1,4 +1,5 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateCommentDto } from './create-comment.dto';
-
-export class UpdateCommentDto extends PartialType(CreateCommentDto) {}
+import { string, z } from 'zod';
+const UpdateCommentSchema = z.object({
+  content: z.string().min(5).max(1024),
+});
+export type UpdateCommentDto = z.infer<typeof UpdateCommentSchema>;
