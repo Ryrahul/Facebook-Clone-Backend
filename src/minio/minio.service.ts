@@ -42,4 +42,15 @@ export class MinioService {
       'BUCKET_NAME',
     )}/${key}`;
   }
+  async deleteImage(key: string) {
+    try {
+      await this.minioclient.removeObject(
+        this.configservice.getOrThrow('BUCKET_NAME'),
+        key,
+      );
+      console.log('removed Successfully');
+    } catch (e) {
+      console.log(e.message);
+    }
+  }
 }
