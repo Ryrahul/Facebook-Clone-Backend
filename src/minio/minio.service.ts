@@ -12,8 +12,8 @@ export class MinioService {
   private minioclient;
   constructor(private readonly configservice: ConfigService) {
     this.endPoint = configservice.getOrThrow('END_POINT');
-    this.port = configservice.getOrThrow('PORT');
-    this.useSSL = configservice.getOrThrow('USESSL');
+    this.port = parseInt(configservice.getOrThrow('PORT'));
+    this.useSSL = false;
     this.accessKey = configservice.getOrThrow('ACCESS_KEY');
     this.secretKey = configservice.getOrThrow('SECRET_KEY');
 
@@ -32,9 +32,14 @@ export class MinioService {
       key,
       image,
       function (err, objinfo) {
-        if (err) return console.log(err);
+        if (err) return console.log(err.message);
         console.log('succes', objinfo);
       },
     );
+  }
+  getUrl(key: string) {
+    return `https://my-minio-server.com/${this.configservice.get(
+      'BUCKET_NAME',
+    )}/${key}`;
   }
 }
