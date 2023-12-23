@@ -142,4 +142,53 @@ export class PostService {
       return e.meta.cause;
     }
   }
+  async removeLike(id: number, user_id: number) {
+    try {
+      await this.PrismaService.post.update({
+        where: {
+          id,
+        },
+        data: {
+          likes: {
+            disconnect: [
+              {
+                id: user_id,
+              },
+            ],
+          },
+        },
+      });
+      return {
+        message: 'Disliked Successfully',
+        post_id: id,
+        timestamp: new Date().toLocaleDateString(),
+      };
+    } catch (e) {
+      return e.meta.cause;
+    }
+  }
+  async checkLike(id: number, user_id) {
+    try {
+      const like = await this.PrismaService.post.findUnique({
+        where: {
+          id,
+          likes: {
+            some: {
+              id: user_id,
+            },
+          },
+        },
+      });
+      if (!like) {
+        return {
+          liked: true,
+        };
+      }
+      return {
+        liked: false,
+      };
+    } catch (e) {
+      return e.meta.cause;
+    }
+  }
 }
