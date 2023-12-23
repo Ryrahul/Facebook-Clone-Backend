@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Redirect } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -21,17 +21,19 @@ export class FriendsService {
       },
     });
     return request;
+    ``;
   }
 
-  async acceptRequest(id: number) {
+  async acceptRequest(id: number, user_id: number) {
     try {
       const friendRequest = await this.prismaservice.friendRequest.findFirst({
         where: {
           id,
+          receiverId: user_id,
         },
       });
       if (!friendRequest) {
-        throw new NotFoundException('No Such Request');
+        throw new NotFoundException('No such Request');
       }
       const updatedRequest = await this.prismaservice.friendRequest.update({
         where: {
@@ -57,18 +59,44 @@ export class FriendsService {
       });
       return updatedRequest;
     } catch (e) {
-      return e.meta.cause;
+      return e.response;
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} friend`;
+  async findAllRequests(id: number) {
+    return await this.prismaservice.user.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        ReceivedRequest: true,
+      },
+    });
   }
 
-  update(id: number) {
-    return `This action updates a #${id} friend`;
-  }
+  async deleteRequest(id: number, user_id: number) {
+    const deletedRequest = await this.prismaservice.friendRequest.delete({
+      where: {
+        id,
+        receiverId: user_id,
+      },
+    });
+    const sentBy = await this.prismaservice.user.findUnique({
+      where: {
+        id: deletedRequest.senderId,
+      },
+      select: {
+        name: true,
+      },
+    });
 
+    if (!deletedRequest) {
+      throw new NotFoundException('No Such friend request exists');
+    }
+    return {
+      message: `Friend request deleted Successfully from ${sentBy}`,
+    };
+  }
   remove(id: number) {
     return `This action removes a #${id} friend`;
   }

@@ -22,9 +22,15 @@ export class FriendsController {
     return this.friendsService.create(Receiverid, req.user.id);
   }
   @Post('receive/:id')
-  async AcceptRequest(@Param('id', ParseIntPipe) id:number){
-    return await this.friendsService.acceptRequest(id)
-
+  async AcceptRequest(@Param('id', ParseIntPipe) id: number, @Req() req) {
+    return await this.friendsService.acceptRequest(id, req.user.id);
   }
-
+  @Get('request')
+  async findAllRequest(@Req() req) {
+    return this.friendsService.findAllRequests(req.user.id);
+  }
+  @Post('delete/:id')
+  async deletreq(@Param('id') id: string, @Req() req) {
+    return this.friendsService.deleteRequest(+id, req.user.id);
+  }
 }
