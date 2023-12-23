@@ -117,29 +117,29 @@ export class PostService {
       return e.meta.cause;
     }
   }
-  async like(id:number,user_id:number){
-    try{
+  async like(id: number, user_id: number) {
+    try {
       await this.PrismaService.post.update({
-        where:{
+        where: {
           id,
         },
-        data:{
-          likes:{
-            connect:[{
-              id:user_id
-            }]
-          }
-        }
-      })
+        data: {
+          likes: {
+            connect: [
+              {
+                id: user_id,
+              },
+            ],
+          },
+        },
+      });
       return {
-        message: "Liked Successfully",
-        postId:id,
-        timestamp:Date.now()
-      }
+        message: 'Liked Successfully',
+        postId: id,
+        timestamp: Date.now(),
+      };
+    } catch (e) {
+      return e.meta.cause;
     }
-    catch(e){
-      return e .meta.cause
-    }
- 
   }
 }

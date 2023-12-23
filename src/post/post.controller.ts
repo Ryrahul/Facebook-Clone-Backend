@@ -55,8 +55,7 @@ export class PostController {
     return this.postservice.updatePost(id, req.user.id, updatePost);
   }
   @Post(':id/like')
-  async like(@Param('id', ParseIntPipe) id:number, @Req() req){
-    return await this.postservice.like(id,req.user.id)
-
+  async like(@Param('id', ParseIntPipe) id: number, @Req() req) {
+    return await this.postservice.like(id, req.user.id);
   }
 }
