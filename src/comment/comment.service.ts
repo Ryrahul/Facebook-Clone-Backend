@@ -61,6 +61,7 @@ export class CommentService {
     updateCommentDto: UpdateCommentDto,
     user_id: number,
   ): Promise<object> {
+    try{
     const updatedComment = await this.prismaservice.comment.update({
       where: {
         id,
@@ -79,6 +80,10 @@ export class CommentService {
       },
     });
     return updatedComment;
+  }
+  catch(e){
+    return e.meta.cause
+  }
   }
 
   async remove(id: number, user_id: number) {
