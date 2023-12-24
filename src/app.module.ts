@@ -17,6 +17,9 @@ import { MinioService } from './minio/minio.service';
 import { MinioModule } from './minio/minio.module';
 import { CommentModule } from './comment/comment.module';
 import { FriendsModule } from './friends/friends.module';
+import { FeedService } from './feed/feed.service';
+import { FeedController } from './feed/feed.controller';
+import { FeedModule } from './feed/feed.module';
 
 @Module({
   imports: [
@@ -31,8 +34,9 @@ import { FriendsModule } from './friends/friends.module';
     MinioModule,
     CommentModule,
     FriendsModule,
+    FeedModule,
   ],
-  controllers: [AppController, UserController, PostController],
+  controllers: [AppController, UserController, PostController, FeedController],
   providers: [
     AppService,
     UserService,
@@ -42,6 +46,7 @@ import { FriendsModule } from './friends/friends.module';
     },
     PostService,
     MinioService,
+    FeedService,
   ],
 })
 export class AppModule {}
