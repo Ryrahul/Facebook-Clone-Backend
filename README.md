@@ -41,8 +41,14 @@ The authentication module has been successfully implemented. Users can register,
   - Register a new user.
   - Request body: `{ "name": "example", "password": "securepassword",email:email }`
 
+## Posts
+
+### Endpoints:
+
 - **POST /post**
+
   - Create New Post
+
 - **GET /post**
 
   - Get all post of a User.
@@ -59,16 +65,66 @@ The authentication module has been successfully implemented. Users can register,
 
   - Update the post
 
+## Comments
+
+### Endpoints:
+
+- **POST /comment/:id**
+
+  - Create New Comment
+
+- **GET /comment**
+
+  - Get all comment of a User.
+
+- **GET /comment/id**
+
+  - Get a single post comments
+
+  **DELETE /comment/id**
+
+  - Delete a comment
+
+  **PATCH /post/id**
+
+  - Update the comment
+
+## Likes
+
+### Endpoints:
+
+- **POST /:id/like**
+
+  - Like the post
+
+  **DELETE /:id/removelike**
+
+  - Remove the like
+
+## Friends
+
+### Endpoints:
+
+- **POST /friends/:Receiverid**
+
+  - Send a friend request
+
+- **POST /friends/receive/:id**
+
+  - Accept Friend Request.
+
+- **GET /friends**
+
+  - Get all requests
+
+  **DELETE /friends/id**
+
+  - Delete a request
+
 ## Features in Progress
 
-The following features are currently in progress:
-
-- **Friend Requests:**
-
-  - Sending and receiving friend requests.
-
-- **Likes and Comments:**
-  - Adding likes and comments to posts.
+- **News Feed:**
+  - Displaying News Feed .
 
 ## Setup
 
