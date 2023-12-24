@@ -14,7 +14,7 @@ import { FriendsService } from './friends.service';
 @Controller('friends')
 export class FriendsController {
   constructor(private readonly friendsService: FriendsService) {}
-  @Post('send/:Receiverid')
+  @Post(':Receiverid')
   async CreateRequest(
     @Param('Receiverid', ParseIntPipe) Receiverid: number,
     @Req() req,
@@ -25,11 +25,11 @@ export class FriendsController {
   async AcceptRequest(@Param('id', ParseIntPipe) id: number, @Req() req) {
     return await this.friendsService.acceptRequest(id, req.user.id);
   }
-  @Get('request')
+  @Get()
   async findAllRequest(@Req() req) {
     return this.friendsService.findAllRequests(req.user.id);
   }
-  @Post('delete/:id')
+  @Delete(':id')
   async deletreq(@Param('id') id: string, @Req() req) {
     return this.friendsService.deleteRequest(+id, req.user.id);
   }
