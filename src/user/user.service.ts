@@ -46,7 +46,6 @@ export class UserService {
     });
   }
   async getUserByName(name: string) {
-    console.log(name);
     return await this.prismaservice.user.findMany({
       where: {
         name: name,
@@ -105,5 +104,13 @@ export class UserService {
     } catch (e) {
       return e;
     }
+  }
+  async getCurrentUser(id:number){
+    return await this.prismaservice.user.findUnique({
+      where:{
+        id
+      }
+    })
+
   }
 }
