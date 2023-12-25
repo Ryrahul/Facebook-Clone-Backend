@@ -18,12 +18,14 @@ export class UserService {
   constructor(private readonly prismaservice: PrismaService) {}
   async createUser({ name, email, password }: SignUpDto): Promise<user> {
     const newUser = await this.prismaservice.user.create({
-      data:{name,email,password,Profile_Preference:{
-        create:{
-
-        }
-      }},
-      
+      data: {
+        name,
+        email,
+        password,
+        Profile_Preference: {
+          create: {},
+        },
+      },
     });
     return newUser;
   }
@@ -43,37 +45,34 @@ export class UserService {
       },
     });
   }
-  async getUserByName(name:string){
-    console.log(name)
+  async getUserByName(name: string) {
+    console.log(name);
     return await this.prismaservice.user.findMany({
-      where:{
-        name:name
-      }
-    })
-
-  }
-  async updateName(id:number,editName:editNameDto){
-    const checkpassword=await this.prismaservice.user.findUnique({
-      where:{
-        id
-      }
-    })
-    if(await bcrypt.compare( editName.password,checkpassword.password)){
-    return await this.prismaservice.user.update({
-      where:{
-        id
+      where: {
+        name: name,
       },
-      data:{
-        name:editName.name
-      }
-    })
+    });
   }
-    else{
+  async updateName(id: number, editName: editNameDto) {
+    const checkpassword = await this.prismaservice.user.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (await bcrypt.compare(editName.password, checkpassword.password)) {
+      return await this.prismaservice.user.update({
+        where: {
+          id,
+        },
+        data: {
+          name: editName.name,
+        },
+      });
+    } else {
       return {
-        message:"Wrong Password"
-      }
+        message: 'Wrong Password',
+      };
     }
-
   }
   async updatePassowrd(email: string, newpassword: string): Promise<user> {
     return await this.prismaservice.user.update({
@@ -83,32 +82,28 @@ export class UserService {
       },
     });
   }
-  async updateProfile(id:number, editprofileDto:editProfileDto ){
-    try{
-    type AccountType= 'Public'| 'Private'
-    type genderType= 'Male'| 'Female' | 'Prefer_Not_To_Say'
-    const {avatar,bio,accountType,gender,location,birthdate}=editprofileDto
-  
-   await this.prismaservice.userProfile.update({
-      where:{
-        userId:id
-      },
-      data:{
-        ...editprofileDto,
-        gender:gender as genderType,
-        accountType:accountType as AccountType
+  async updateProfile(id: number, editprofileDto: editProfileDto) {
+    try {
+      type AccountType = 'Public' | 'Private';
+      type genderType = 'Male' | 'Female' | 'Prefer_Not_To_Say';
+      const { avatar, bio, accountType, gender, location, birthdate } =
+        editprofileDto;
 
-        
-      }
-    })
-    return {
-      message:"Updated Successfully"
+      await this.prismaservice.userProfile.update({
+        where: {
+          userId: id,
+        },
+        data: {
+          ...editprofileDto,
+          gender: gender as genderType,
+          accountType: accountType as AccountType,
+        },
+      });
+      return {
+        message: 'Updated Successfully',
+      };
+    } catch (e) {
+      return e;
     }
   }
-  catch(e){
-    return e
-  }
-
-  }
-  
 }
