@@ -2,6 +2,7 @@ import { Body, Controller, Post, Put, Query, Req, UsePipes } from '@nestjs/commo
 import { UserService } from './user.service';
 import { editProfileDto, updateProfileSchema } from './dto/editProfile.dto';
 import { ZodValidationPipe } from 'src/common/zod.pipe';
+import { editNameDto, editNameSchema } from './dto/editname.dto';
 
 @Controller('user')
 export class UserController {
@@ -13,6 +14,11 @@ export class UserController {
 
     }
     @Put()
+    @UsePipes(new ZodValidationPipe(editNameSchema))
+    async EditName(@Body() editName:editNameDto, @Req() req){
+        return await this.userService.updateName(req.user.id,editName)
+
+    }
 
     @Post()
     async GetUserbyName(@Query() {name}:{name}){

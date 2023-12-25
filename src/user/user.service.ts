@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { SignUpDto } from 'src/auth/dto/Signup-dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { editProfileDto } from './dto/editProfile.dto';
+import { editNameDto } from './dto/editname.dto';
+import * as bcrypt from 'bcrypt';
+
 export interface user {
   id: number;
   email: string;
@@ -49,7 +52,27 @@ export class UserService {
     })
 
   }
-  async updateName(id:number,){
+  async updateName(id:number,editName:editNameDto){
+    const checkpassword=await this.prismaservice.user.findUnique({
+      where:{
+        id
+      }
+    })
+    if(await bcrypt.compare( editName.password,checkpassword.password)){
+    return await this.prismaservice.user.update({
+      where:{
+        id
+      },
+      data:{
+        name:editName.name
+      }
+    })
+  }
+    else{
+      return {
+        message:"Wrong Password"
+      }
+    }
 
   }
   async updatePassowrd(email: string, newpassword: string): Promise<user> {
