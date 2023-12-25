@@ -40,11 +40,11 @@ model FriendRequest {
 
 model UserProfile {
   id          Int      @id @default(autoincrement())
-  avatar      String
-  bio         String
-  birthdate   DateTime
-  gender      Gender
-  location    String
+  avatar      String?
+  bio         String?
+  birthdate   DateTime?
+  gender      Gender?
+  location    String?
   user        User     @relation(fields: [userId], references: [id])
   userId      Int      @unique
   accountType Type     @default(Public)
