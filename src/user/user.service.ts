@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { SignUpDto } from 'src/auth/dto/Signup-dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { editProfileDto } from './dto/editProfile.dto';
 export interface user {
   id: number;
   email: string;
@@ -14,7 +15,12 @@ export class UserService {
   constructor(private readonly prismaservice: PrismaService) {}
   async createUser({ name, email, password }: SignUpDto): Promise<user> {
     const newUser = await this.prismaservice.user.create({
-      data: { name, email, password },
+      data:{name,email,password,Profile_Preference:{
+        create:{
+
+        }
+      }},
+      
     });
     return newUser;
   }
@@ -34,6 +40,18 @@ export class UserService {
       },
     });
   }
+  async getUserByName(name:string){
+    console.log(name)
+    return await this.prismaservice.user.findMany({
+      where:{
+        name:name
+      }
+    })
+
+  }
+  async updateName(id:number,){
+
+  }
   async updatePassowrd(email: string, newpassword: string): Promise<user> {
     return await this.prismaservice.user.update({
       where: { email },
@@ -42,4 +60,32 @@ export class UserService {
       },
     });
   }
+  async updateProfile(id:number, editprofileDto:editProfileDto ){
+    try{
+    type AccountType= 'Public'| 'Private'
+    type genderType= 'Male'| 'Female' | 'Prefer_Not_To_Say'
+    const {avatar,bio,accountType,gender,location,birthdate}=editprofileDto
+  
+   await this.prismaservice.userProfile.update({
+      where:{
+        userId:id
+      },
+      data:{
+        ...editprofileDto,
+        gender:gender as genderType,
+        accountType:accountType as AccountType
+
+        
+      }
+    })
+    return {
+      message:"Updated Successfully"
+    }
+  }
+  catch(e){
+    return e
+  }
+
+  }
+  
 }
