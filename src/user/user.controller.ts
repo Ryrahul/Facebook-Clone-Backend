@@ -28,11 +28,11 @@ export class UserController {
   }
 
   @Post()
-  async GetUserbyName(@Query() { name }: { name:string }) {
+  async GetUserbyName(@Query() { name }: { name: string }) {
     return await this.userService.getUserByName(name);
   }
   @Get()
-  async GetCurrentUser(@Req() req){
-    return await this.userService.getCurrentUser(req.user.id)
+  async GetCurrentUser(@Req() req) {
+    return await this.userService.getCurrentUser(req.user.id);
   }
 }
