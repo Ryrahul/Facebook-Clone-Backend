@@ -4,6 +4,8 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { editProfileDto } from './dto/editProfile.dto';
 import { editNameDto } from './dto/editname.dto';
 import * as bcrypt from 'bcrypt';
+import { randomUUID } from 'crypto';
+import { MinioService } from 'src/minio/minio.service';
 
 export interface user {
   id: number;
@@ -15,7 +17,8 @@ export interface user {
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prismaservice: PrismaService) {}
+  constructor(private readonly prismaservice: PrismaService,
+    private minioserice:MinioService) {}
   async createUser({ name, email, password }: SignUpDto): Promise<user> {
     const newUser = await this.prismaservice.user.create({
       data: {
@@ -112,5 +115,18 @@ export class UserService {
       }
     })
 
+  }
+  async ChangeProfilePicture(image:Express.Multer.File,id:number){
+    const img_key=randomUUID()
+    const img_url=await this.minioserice.getUrl(img_key)
+    await this.minioserice.uploadImage(image.buffer,img_key)
+    await this.prismaservice.user.update({
+      where:{
+        id
+      },
+      data:{
+        profile_picture:img_url
+      }
+    })  
   }
 }
