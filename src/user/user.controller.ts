@@ -6,12 +6,15 @@ import {
   Put,
   Query,
   Req,
+  UploadedFile,
+  UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { editProfileDto, updateProfileSchema } from './dto/editProfile.dto';
 import { ZodValidationPipe } from 'src/common/zod.pipe';
 import { editNameDto, editNameSchema } from './dto/editname.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('user')
 export class UserController {
@@ -35,4 +38,9 @@ export class UserController {
   async GetCurrentUser(@Req() req) {
     return await this.userService.getCurrentUser(req.user.id);
   }
+  @Put()
+  @UseInterceptors(FileInterceptor('image'))
+  async ChangePP(@UploadedFile() image:Express.Multer.File, @Req() req:any){
+    return this.userService.ChangeProfilePicture(image,req.user.id)
+ }
 }
